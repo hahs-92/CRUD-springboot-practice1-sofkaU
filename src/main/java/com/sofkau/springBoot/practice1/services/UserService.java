@@ -43,4 +43,14 @@ public class UserService {
         }
     }
 
+    public UserModel update(UserModel user, Long id) {
+        return userRepository.findById(id)
+                .map(u -> {
+                    u.setName(user.getName());
+                    u.setEmail(user.getEmail());
+                    u.setPriority(user.getPriority());
+                    return userRepository.save(u);
+                }).orElseThrow(null);
+    }
+
 }

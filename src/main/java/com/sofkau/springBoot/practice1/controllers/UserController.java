@@ -20,14 +20,22 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<List<UserModel>> getAll() {
-        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel>getById(@PathVariable Long userId) {
-        return userService.getById(userId)
-                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            return userService.getById(userId)
+                    .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping()
@@ -39,9 +47,13 @@ public class UserController {
        }
     }
 
-    @GetMapping("")
-    public List<UserModel> getUserByPriority(@RequestParam("priority") Integer priority) {
-        return userService.getByPriority(priority);
+    @GetMapping("/query")
+    public ResponseEntity<List<UserModel>> getUserByPriority(@RequestParam("priority") Integer priority) {
+        try {
+            return new ResponseEntity<>(userService.getByPriority(priority),HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{userId}")
@@ -57,6 +69,15 @@ public class UserController {
         } catch (Exception ex) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping("/{userId}")
+    ResponseEntity<UserModel> updateUser(@RequestBody UserModel user, @PathVariable Long userId) {
+       try {
+           return  new ResponseEntity<>(userService.update(user, userId), HttpStatus.OK);
+       } catch (Exception ex) {
+           return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+       }
     }
 
 }
