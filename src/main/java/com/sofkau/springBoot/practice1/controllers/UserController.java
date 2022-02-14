@@ -23,6 +23,13 @@ public class UserController {
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserModel>getById(@PathVariable Long userId) {
+        return userService.getById(userId)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PostMapping()
     public ResponseEntity<UserModel> save(@RequestBody UserModel user) {
        try {
@@ -30,6 +37,26 @@ public class UserController {
        } catch (Exception e) {
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }
+    }
+
+    @GetMapping("")
+    public List<UserModel> getUserByPriority(@RequestParam("priority") Integer priority) {
+        return userService.getByPriority(priority);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity delete(@PathVariable Long userId) {
+        try {
+            var isDelete = userService.delete(userId);
+
+            if(isDelete) {
+               return new ResponseEntity<>(HttpStatus.OK);
+           } else {
+               return new ResponseEntity(HttpStatus.NOT_FOUND);
+           }
+        } catch (Exception ex) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

@@ -34,4 +34,13 @@ public class UserService {
         return userRepository.findByPriority(priority);
     }
 
+    public boolean delete(Long id) {
+        try {
+            userRepository.deleteById(id);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
 }
